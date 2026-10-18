@@ -4,7 +4,7 @@ A cozy, child-friendly farming game for the **ELECFREAKS RETRO Arcade for Educat
 
 It is written in **bare-metal C** for the STM32F412RE: no game engine, no JavaScript runtime, no web build. The firmware draws a 320×240 pixel-art world, runs the whole game loop, and saves to internal flash.
 
-**This repository is source-only.** It does not ship the ARM toolchain, prebuilt UF2 files, simulator binaries or frame dumps. Build everything from the source.
+**This repository is source-only.** It does not commit the ARM toolchain, prebuilt UF2 files, simulator binaries or frame dumps. Build everything from source, or download the ready-to-flash UF2 from the GitHub **Releases** page.
 
 <p align="center">
   <img src="docs/images/title.png" alt="RETRO Mini Farm title screen" width="480">
@@ -94,6 +94,19 @@ The game is designed to be readable by a young child:
   - hidden NPC lines
   - campfire after all stories
   - a letter in the mailbox
+
+## Download and install
+
+The easiest way to play is the prebuilt UF2 from the
+[latest GitHub release](../../releases/latest).
+
+1. Hold **Menu + B** on the handheld until `ARCADE-F4` appears.
+2. Copy `retro-mini-farm-v1.0.0.uf2` to the `ARCADE-F4` drive.
+3. The device reboots automatically.
+
+The release ZIP also contains the UF2, this README, the license and SHA-256
+checksums. The save file is in a separate flash sector and is preserved by
+normal firmware updates.
 
 ## AI / agent handoff
 

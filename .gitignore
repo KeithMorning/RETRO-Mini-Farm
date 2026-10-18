@@ -27,3 +27,6 @@ native/third_party/libopencm3/lib/*.a
 
 # third-party source is fetched by make deps (do not commit)
 native/third_party/
+
+# local release packaging (upload as GitHub Release assets instead)
+dist/

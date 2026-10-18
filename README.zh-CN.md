@@ -4,7 +4,7 @@
 
 原生 C 固件，不依赖游戏引擎、网页运行时或 MakeCode；320×240 像素画，完整游戏循环，存档写在内部 Flash。
 
-**仓库只包含源码**：不包含 ARM 工具链、预编译 UF2、模拟器二进制或帧转储。所有东西都从源码构建。
+**仓库只包含源码**：不提交 ARM 工具链、预编译 UF2、模拟器二进制或帧转储。可以直接从源码构建，也可以到 GitHub **Releases** 下载已经打好的 UF2。
 
 <p align="center">
   <img src="docs/images/title.png" alt="标题画面" width="480">
@@ -56,6 +56,16 @@
 - 出现 `!` 时按 A
 - 按住 A 抬绿区，松开下降
 - B 放弃
+
+## 下载和安装
+
+最方便的方式是下载 [最新 Release](../../releases/latest) 里的 UF2。
+
+1. 按住 **Menu + B**，直到出现 `ARCADE-F4`
+2. 把 `retro-mini-farm-v1.0.0.uf2` 拷进 `ARCADE-F4`
+3. 设备自动重启
+
+Release ZIP 里还包含 UF2、README、LICENSE 和 SHA-256 校验文件。存档在独立 Flash 扇区，正常升级不会丢。
 
 ## 给另一个 AI / 开发者的交接
 
