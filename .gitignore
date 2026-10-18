@@ -1,0 +1,29 @@
+.DS_Store
+__pycache__/
+*.pyc
+
+# Local ARM toolchain (install separately)
+toolchain/
+
+# Build outputs
+native/build/
+*.o
+*.elf
+*.bin
+*.uf2
+
+# Simulator binaries and frame dumps
+native/sim/sim
+native/sim/*_test
+native/sim/main
+native/sim/out/
+native/sim/save.dat
+
+# Historical firmware backups
+firmware/backup/
+
+# libopencm3 is built from source by the Makefile
+native/third_party/libopencm3/lib/*.a
+
+# third-party source is fetched by make deps (do not commit)
+native/third_party/
