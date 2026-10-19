@@ -26,13 +26,12 @@ const monoFont = '"Courier New", "SFMono-Regular", monospace';
 const scenes = [
   { from: 0, to: 75, zh: "一个小农场。", en: "a little farm." },
   { from: 75, to: 210, zh: "从清晨开始。", en: "wake up." },
-  { from: 210, to: 260, zh: "种下第一颗种子。", en: "grow." },
-  { from: 260, to: 327, zh: "去小镇打个招呼。", en: "say hello." },
-  { from: 327, to: 384, zh: "把一年装进背包。", en: "carry it with you." },
-  { from: 384, to: 477, zh: "去海边钓鱼。", en: "cast a line." },
-  { from: 477, to: 534, zh: "下到矿洞第二层。", en: "go deeper." },
-  { from: 534, to: 585, zh: "交三个朋友。", en: "make friends." },
-  { from: 585, to: 630, zh: "第一年，开始了。", en: "year one." },
+  { from: 210, to: 270, zh: "种下第一颗种子。", en: "grow." },
+  { from: 270, to: 367, zh: "去认识三个朋友。", en: "three friends." },
+  { from: 367, to: 467, zh: "小猫、小鸡、小恐龙。", en: "little friends." },
+  { from: 467, to: 586, zh: "下到矿洞第二层。", en: "go deeper." },
+  { from: 586, to: 630, zh: "第一年，开始了。", en: "year one." },
+  { from: 630, to: 666, zh: "一个小农场，一整年。", en: "one little year." },
 ];
 
 const Background: React.FC = () => {
@@ -107,17 +106,10 @@ const Background: React.FC = () => {
 
 const DeviceIntro: React.FC = () => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
   const fade = interpolate(frame, [0, 10, 104, 120], [0, 1, 1, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
-  const pop = spring({
-    frame: frame - 4,
-    fps,
-    config: { damping: 14, stiffness: 80 },
-  });
-  const deviceScale = 0.96 + 0.04 * Math.max(0, Math.min(1, pop));
   const textY = interpolate(frame, [8, 28], [26, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
@@ -155,11 +147,8 @@ const DeviceIntro: React.FC = () => {
           border: "6px solid #087f92",
           boxShadow:
             "0 34px 90px rgba(0,0,0,.55), inset 0 3px 0 rgba(255,255,255,.55), inset 0 -10px 30px rgba(0,70,80,.35)",
-          scale: deviceScale,
-          rotate: interpolate(frame, [0, 24], ["-2deg", "0deg"], {
-            extrapolateLeft: "clamp",
-            extrapolateRight: "clamp",
-          }),
+          scale: 1,
+          rotate: "0deg",
         }}
       >
         <div
@@ -610,6 +599,19 @@ export const Trailer: React.FC = () => {
         <span>·</span>
         <span>1 LITTLE LIFE</span>
       </div>
+
+      {/* Opaque lead-in: hides any first-frame browser/encoder artifacts. */}
+      <AbsoluteFill
+        style={{
+          background: "#050b07",
+          zIndex: 99,
+          pointerEvents: "none",
+          opacity: interpolate(frame, [0, 8, 16], [1, 1, 0], {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          }),
+        }}
+      />
     </AbsoluteFill>
   );
 };

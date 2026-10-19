@@ -10,7 +10,7 @@ import struct
 import wave
 
 SR = 44100
-DUR = 788 / 30
+DUR = 786 / 30
 N = int(SR * DUR)
 mix = [0.0] * N
 random.seed(7)
