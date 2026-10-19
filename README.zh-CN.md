@@ -24,7 +24,7 @@
   - Tom：旧栈桥
   - Lily：花冠
 - 海滩、贝壳、鱼竿、钓鱼小游戏、4 种鱼
-- **5 级房子**、水壶升级、鱼竿/剑升级
+- **8 级房子**（体力 30→65）、**5 级水壶**（15→85）、鱼竿/剑升级
 - 小猫 + 小鸡可以同时养；2 次喂食 = 1 心
 - 猫满心每天带鱼；鸡满心每天下蛋；两只满心解锁小恐龙
 - 三条故事完成后解锁两层矿洞：铜矿、史莱姆、剑、生命；梯子下第二层
@@ -76,6 +76,7 @@ Release ZIP 里还包含 UF2、README、LICENSE 和 SHA-256 校验文件。存�
 - [AGENTS.md](AGENTS.md) — 短操作规则和命令
 - [docs/AI-HANDOFF.md](docs/AI-HANDOFF.md) — 完整环境、硬件、架构、存档格式、修改配方和验收清单
 - [docs/build-flash.md](docs/build-flash.md) — 编译和烧录
+- [docs/economy.md](docs/economy.md) — 升级费用与节奏
 
 回归测试：
 

@@ -32,7 +32,7 @@ year one. A best-friends ending is available for 5 hearts and the dinosaur.
 - **Three NPCs** — Mira, Tom and Lily — with schedules, gifts, five hearts
   and three two-chapter storylines
 - **Beach and fishing**: shells, rod, four fish and a green-bar minigame
-- **Five house levels**, water-can upgrades, and rod / sword upgrades
+- **Eight house levels** (energy 30→65), **five water-can levels** (15→85), and rod / sword upgrades
 - **Cat, chicken and dinosaur**: daily feeding, half hearts, daily gifts,
   and a dinosaur that digs ore
 - **Mine**: two floors unlocked after all three stories, with sword, copper ore and slimes

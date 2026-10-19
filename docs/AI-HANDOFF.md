@@ -383,7 +383,7 @@ scaling and shadow work.
 - both full: `dino_unlocked`; dino digs one ore per sleep
 - save v6 fields: `pet_owned`, `pet_aff`, `pet_fed`, `dino_unlocked`,
   `seeds_ext[2]`, `produce_ext[2]`, `bin_ext[2]`, `tilled[3]`;
-  `pet_pad[0]` stores rod/sword levels
+  `pet_pad[0]` stores rod/sword levels; `pet_pad[1]` stores the water-can level
 
 ### Mine
 

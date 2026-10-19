@@ -1082,6 +1082,22 @@ static void build_farm(void)
         farm_tiles[8 * FARM_W + 9] = T_FLOWER;
     }
 
+    if (house_level >= 5) {
+        farm_tiles[9 * FARM_W + 2] = T_LAMP;
+        farm_tiles[9 * FARM_W + 10] = T_FLOWER;
+    }
+    if (house_level >= 6) {
+        farm_tiles[6 * FARM_W + 1] = T_WINDOW;
+        farm_tiles[6 * FARM_W + 9] = T_WINDOW;
+        farm_tiles[8 * FARM_W + 10] = T_FLOWER;
+    }
+    if (house_level >= 7) {
+        farm_tiles[7 * FARM_W + 1] = T_WINDOW;
+        farm_tiles[7 * FARM_W + 9] = T_WINDOW;
+        farm_tiles[9 * FARM_W + 1] = T_LAMP;
+        farm_tiles[9 * FARM_W + 11] = T_LAMP;
+    }
+
     /* Path from door to farm gate. */
     for (int y = 8; y <= 9; y++) {
         farm_tiles[y * FARM_W + 5] = T_PATH;
@@ -1298,7 +1314,7 @@ static void build_room(uint8_t *t, int kind)
             t[11 * INT_W + 13] = T_RUG;
             t[11 * INT_W + 14] = T_RUG;
         }
-        if (house_level >= 4) {
+        if (house_level >= 7) {
             t[5 * INT_W + 16] = T_PAINTING;
             t[6 * INT_W + 2] = T_CLOCK;
             t[9 * INT_W + 7] = T_PLANT;
@@ -2301,13 +2317,13 @@ static void draw_status(uint16_t *fb)
                 draw_text_big_shadow(fb, x + 16, yy, "house", C_WHITE);
                 draw_text_big_shadow(fb, x + 100, yy, "lv", C_WHITE);
                 draw_num_big_shadow(fb, x + 136, yy, house_level, C_GOLD);
-                if (house_level >= 4) draw_text_big_shadow(fb, x + 208, yy, "max", C_GOLD);
+                if (house_level >= 7) draw_text_big_shadow(fb, x + 208, yy, "max", C_GOLD);
                 else draw_gold(fb, x + 196, yy, house_cost[house_level]);
             } else if (kind == 1) {
                 draw_text_big_shadow(fb, x + 16, yy, "can", C_WHITE);
                 draw_text_big_shadow(fb, x + 76, yy, "cap", C_WHITE);
                 draw_num_big_shadow(fb, x + 124, yy, water_can_max, C_WATER_L);
-                if (can_level >= 2) draw_text_big_shadow(fb, x + 208, yy, "max", C_GOLD);
+                if (can_level >= 4) draw_text_big_shadow(fb, x + 208, yy, "max", C_GOLD);
                 else draw_gold(fb, x + 196, yy, can_cost[can_level]);
             } else if (kind == 2) {
                 draw_text_big_shadow(fb, x + 16, yy, "rod", C_WHITE);
@@ -3783,7 +3799,7 @@ static void upgrade_house(void)
 
 static void upgrade_can(void)
 {
-    if (can_level >= 2) {
+    if (can_level >= 4) {
         status_open = 0;
         set_message("can max");
         return;
@@ -3873,6 +3889,7 @@ static void game_to_save(SaveData *d)
     d->pet_fed = pet_fed;
     d->dino_unlocked = (uint8_t)dino_unlocked;
     d->pet_pad[0] = (uint8_t)((rod_level & 3) | ((sword_level & 3) << 2));
+    d->pet_pad[1] = (uint8_t)can_level;
     d->pad[1] = (uint8_t)((fish[0] & 15) | ((fish[1] & 15) << 4));
     d->pad[2] = (uint8_t)((fish[2] & 15) | ((fish[3] & 15) << 4));
     memcpy(d->story, story, sizeof(story));
@@ -3923,9 +3940,13 @@ static void game_from_save(const SaveData *d)
     weather = d->weather;
     house_level = (d->pad0 >> 4) & 15;
     if (house_level == 0 && (d->flags & 3) != 0) house_level = d->flags & 3;
-    if (house_level > 4) house_level = 4;
-    can_level = (d->flags >> 2) & 3;
-    if (can_level > 2) can_level = 2;
+    if (house_level > 7) house_level = 7;
+    can_level = d->pet_pad[1] & 7;
+    if (can_level > 4) can_level = 4;
+    if (can_level == 0) {
+        int old_can = (d->flags >> 2) & 3;
+        if (old_can) can_level = old_can;
+    }
     rod_owned = (d->flags >> 4) & 1;
     shell_mask = d->pad0 & 15;
     pet_owned = d->pet_owned & 3;

@@ -58,7 +58,7 @@ The game is designed to be readable by a young child:
 
 ### House and pets
 
-- **5 house levels** with different exteriors and interiors
+- **8 house levels** with different exteriors and interiors
 - Water can upgrades
 - Buy **both** a cat and a chicken
 - Feed them once a day; 2 feeds = 1 heart, with half-heart display
@@ -125,6 +125,7 @@ Another coding agent can pick this repository up without prior context:
 - [docs/AI-HANDOFF.md](docs/AI-HANDOFF.md) — full environment, hardware,
   architecture, save format, modification recipes and acceptance checklist
 - [docs/build-flash.md](docs/build-flash.md) — build and flash
+- [docs/economy.md](docs/economy.md) — upgrade costs and pacing
 
 Run the regression suite with:
 
