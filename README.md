@@ -228,7 +228,7 @@ make test
 ```
 
 This builds and runs the save/farm/menu/upgrade/season/beach/pets/story/mine/
-easter-egg tests using the host compiler.
+easter-egg and year-end goal tests using the host compiler.
 
 ## Flash
 

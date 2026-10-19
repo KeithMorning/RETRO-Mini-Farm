@@ -15,5 +15,13 @@ int main(void){
  game_debug_season(3); game_debug_day(28); game_debug_warp(GAME_SCENE_HOME,3,5);
  in.up=1; step(&in,1); in.up=0; tap(&in,&in.a); step(&in,50);
  game_render(fb); dump("g_year_end");
+
+ game_init(); memset(&in,0,sizeof in); game_update(&in); tap(&in,&in.a);
+ game_debug_unlock_mine(); game_debug_fill_pets();
+ for(int i=0;i<3;i++) game_debug_points(i,100);
+ game_debug_coins(0);
+ game_debug_season(3); game_debug_day(28); game_debug_warp(GAME_SCENE_HOME,3,5);
+ in.up=1; step(&in,1); in.up=0; tap(&in,&in.a); step(&in,50);
+ game_render(fb); dump("g_best_end");
  printf("goal test done\n"); return 0;
 }

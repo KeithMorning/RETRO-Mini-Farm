@@ -507,6 +507,7 @@ make sim
 - `story_test`
 - `mine_test`
 - `easter_test`
+- `goal_test` (normal and best year-end endings)
 
 `save_test` and `menu_test` use `sim/save_file.c`; the others use
 `sim/save_stub.c`.
