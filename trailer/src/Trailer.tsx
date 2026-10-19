@@ -284,7 +284,7 @@ const DeviceIntro: React.FC = () => {
           一台真正的掌上游戏机
         </div>
         <div style={{ color: GOLD, fontFamily: cnFont, fontSize: 32, marginTop: 12 }}>
-          不是手机游戏 · 真实按键 · 2.4 英寸屏
+          不是手机游戏 · 真实按键 · 源码开放
         </div>
         <div
           style={{
@@ -295,7 +295,7 @@ const DeviceIntro: React.FC = () => {
             letterSpacing: 3,
           }}
         >
-          A REAL HANDHELD · REAL BUTTONS · POCKET SIZE
+          A REAL HANDHELD · REAL BUTTONS · OPEN SOURCE
         </div>
       </div>
     </AbsoluteFill>
@@ -424,14 +424,25 @@ const EndCard: React.FC<{ frame: number }> = ({ frame }) => {
           letterSpacing: 2,
         }}
       >
-        免费下载 · 链接在简介
+        免费下载 · 源码可改
       </div>
       <div
         style={{
-          marginTop: 12,
-          color: "#8eaa8b",
+          marginTop: 14,
+          color: GOLD,
           fontFamily: monoFont,
           fontSize: 22,
+          letterSpacing: 3,
+        }}
+      >
+        FORK IT · BUILD IT · PLAY IT
+      </div>
+      <div
+        style={{
+          marginTop: 8,
+          color: "#8eaa8b",
+          fontFamily: monoFont,
+          fontSize: 20,
           letterSpacing: 2,
         }}
       >
@@ -598,7 +609,7 @@ export const Trailer: React.FC = () => {
         <span>·</span>
         <span>2 MINE FLOORS</span>
         <span>·</span>
-        <span>1 LITTLE LIFE</span>
+        <span>OPEN SOURCE</span>
       </div>
 
       {/* Opaque lead-in: hides any first-frame browser/encoder artifacts. */}

@@ -94,6 +94,23 @@ make test
 | ![宠物](docs/images/pets.png) | ![宠物店](docs/images/pet-shop.png) |
 | ![故事](docs/images/stories.png) | ![篝火](docs/images/campfire.png) |
 
+## 自己改
+
+这不是一个只能玩的封闭固件。完整源码都在仓库里，可以自己继续改：
+
+```bash
+git clone <your-repo>
+cd native
+make deps
+make -j4
+make sim
+make test
+```
+
+作物、NPC、场景、物品、故事和 UI 都在 `native/src/game.c`。
+`docs/AI-HANDOFF.md` 里有完整架构、存档格式和修改配方。
+改完重新生成 UF2，拷进掌机，就能继续玩自己的版本。
+
 ## 编译
 
 ### 依赖

@@ -59,6 +59,12 @@ The current save format is **v6**. Saves from v1–v5 are migrated
 automatically. A save is written when you sleep, use Menu → save, upgrade,
 or complete a story quest.
 
+## Make it yours
+
+The full source is included. Fork it, change crops/NPCs/stories/UI, build the
+UF2, and play your own version. See `docs/AI-HANDOFF.md` for the architecture,
+save format and modification recipes.
+
 ## Notes
 
 - This repository is source-only; prebuilt UF2 files are attached to this

@@ -171,6 +171,24 @@ All screenshots are rendered by the host simulator from the same `game.c` used b
 - Hold **A** to raise the green zone; release to lower it
 - **B** cancels
 
+## Make it yours
+
+This is not a closed binary. The full source is in the repository, and the
+game is designed to be forked:
+
+```bash
+git clone <your-repo>
+cd native
+make deps
+make -j4
+make sim
+make test
+```
+
+Change crops, NPCs, scenes, items, stories or UI in `native/src/game.c`.
+`docs/AI-HANDOFF.md` contains a full map, save format and modification recipes.
+Build the UF2, copy it to the handheld, and keep playing your own version.
+
 ## Build
 
 ### Requirements
