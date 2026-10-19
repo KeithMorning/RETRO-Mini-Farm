@@ -60,9 +60,8 @@ int main(void)
     memset(&in, 0, sizeof(in));
     game_init();
 
-    /* Intro animation, captured at 2x speed. */
-    for (int i = 0; i < 100; i++) {
-        game_update(&in);
+    /* Full intro animation at capture speed, then hold the title card. */
+    for (int i = 0; i < 210; i++) {
         game_update(&in);
         emit();
     }
