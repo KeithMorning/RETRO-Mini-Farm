@@ -37,6 +37,7 @@ static void tap(Input *in, uint8_t *field)
 
 static void shot(Input *in, const char *name)
 {
+    (void)in;
     game_render(fb);
     dump(name);
 }
@@ -50,6 +51,9 @@ int main(void)
     memset(&in, 0, sizeof(in));
 
     game_update(&in);
+    shot(&in, "t0_intro");
+
+    for (int i = 0; i < 190; i++) game_update(&in);
     shot(&in, "t0_title");
 
     tap(&in, &in.a);

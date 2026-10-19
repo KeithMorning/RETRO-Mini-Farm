@@ -274,6 +274,8 @@ static int player_x, player_y, facing;
 static int player_walk, player_walk_tick;
 static int state;
 static int boot_loaded;
+static int title_t;
+#define TITLE_END 180
 static int season, day, year, minutes;
 static int coins, energy, bin_value, water_can;
 static int house_level, can_level;
@@ -2650,25 +2652,117 @@ static void draw_prompt(uint16_t *fb)
     draw_text_big_shadow(fb, x + 8, y + 4, s, C_WHITE);
 }
 
-static void draw_title(uint16_t *fb)
+static void draw_title(uint16_t *fb, int t)
 {
-    int x = 36, y = 52, w = 248, h = 124;
-    fill_rect(fb, x, y, w, h, C_GOLD);
-    fill_rect(fb, x + 2, y + 2, w - 4, h - 4, C_HUD);
-    fill_rect(fb, x + 4, y + 4, w - 8, 1, C_HUD_L);
-    for (int yy = y + 12; yy < y + h - 8; yy += 14) {
-        fill_rect(fb, x + 6, yy, w - 12, 1, RGB(68, 48, 34));
-    }
-    put_px(fb, x + 8, y + 8, C_GOLD);
-    put_px(fb, x + w - 9, y + 8, C_GOLD);
-    put_px(fb, x + 8, y + h - 9, C_GOLD);
-    put_px(fb, x + w - 9, y + h - 9, C_GOLD);
+    /* The intro is fully procedural: no sprite sheet or scratch buffer is
+       retained after it finishes. */
+    if (t > TITLE_END) t = TITLE_END;
+    int dawn = t < 90 ? t : 90;
+    int horizon = 156;
 
-    draw_text_big_shadow(fb, 100, y + 16, "mini farm", C_GOLD);
-    draw_item_icon(fb, 66, y + 18, 0, 1);
-    draw_shell(fb, x + w - 78, y + 18);
-    draw_text_big_shadow(fb, 104, y + 52, "goal 500g", C_WHITE);
-    draw_text_big_shadow(fb, 116, y + 84, "press A", C_WHITE);
+    for (int y = 0; y < horizon; y++) {
+        int k = dawn + y / 3;
+        if (k > 90) k = 90;
+        int r = 18 + k * 2;
+        int g = 30 + k;
+        int b = 54 + k / 2;
+        if (r > 238) r = 238;
+        if (g > 174) g = 174;
+        if (b > 116) b = 116;
+        fill_rect(fb, 0, y, GAME_W, 1, RGB(r, g, b));
+    }
+
+    static const uint16_t stars[][2] = {
+        {20,18},{54,36},{92,12},{128,30},{166,16},{206,38},{244,14},{286,34},
+        {38,58},{112,54},{184,58},{262,52},{74,74},{220,72},{300,64}
+    };
+    if (t < 70) {
+        for (unsigned i = 0; i < sizeof(stars) / sizeof(stars[0]); i++) {
+            if ((t + i * 7) % 30 < 24) put_px(fb, stars[i][0], stars[i][1], RGB(240, 238, 214));
+        }
+    }
+
+    int sun_y = 138 - (t < 80 ? t : 80);
+    int sr = 15;
+    for (int dy = -sr; dy <= sr; dy++) {
+        int w = sr * sr - dy * dy;
+        int ww = 1;
+        while ((ww + 1) * (ww + 1) <= w) ww++;
+        fill_rect(fb, 252 - ww, sun_y + dy, ww * 2, 1, RGB(250, 184, 92));
+    }
+    fill_rect(fb, 246, sun_y - 9, 12, 2, RGB(255, 214, 130));
+
+    for (int x = 0; x < GAME_W; x++) {
+        int h = 18 + (x * 7 + 11) % 19;
+        fill_rect(fb, x, horizon - h, 1, h, RGB(44, 82, 58));
+    }
+    fill_rect(fb, 0, horizon, GAME_W, GAME_H - horizon, RGB(62, 118, 66));
+    fill_rect(fb, 0, horizon + 12, GAME_W, 2, RGB(48, 92, 54));
+
+    /* Little farmhouse. */
+    fill_rect(fb, 38, 122, 48, 26, RGB(126, 86, 54));
+    fill_rect(fb, 40, 124, 44, 22, RGB(196, 154, 102));
+    for (int i = 0; i < 30; i++) {
+        fill_rect(fb, 34 + i, 112 - i / 2, 56 - i * 2, 2, RGB(150, 62, 48));
+    }
+    fill_rect(fb, 58, 132, 10, 14, RGB(86, 56, 34));
+    fill_rect(fb, 48, 128, 6, 6, RGB(92, 154, 176));
+    fill_rect(fb, 72, 128, 6, 6, RGB(92, 154, 176));
+
+    /* Tree. */
+    fill_rect(fb, 268, 128, 6, 22, RGB(96, 62, 38));
+    fill_rect(fb, 250, 104, 42, 24, RGB(34, 78, 44));
+    fill_rect(fb, 256, 96, 30, 14, RGB(48, 104, 54));
+    fill_rect(fb, 246, 112, 12, 10, RGB(48, 104, 54));
+    fill_rect(fb, 286, 114, 10, 8, RGB(48, 104, 54));
+    fill_rect(fb, 258, 100, 12, 4, RGB(78, 142, 70));
+
+    /* Fence and crop rows. */
+    for (int x = 22; x < 220; x += 18) {
+        fill_rect(fb, x, 166, 2, 22, RGB(150, 104, 62));
+        fill_rect(fb, x, 172, 16, 2, RGB(176, 128, 76));
+    }
+    for (int x = 26; x < 210; x += 26) {
+        fill_rect(fb, x, 188, 3, 8, RGB(64, 120, 58));
+        fill_rect(fb, x - 3, 186, 9, 3, RGB(84, 146, 70));
+    }
+
+    /* Pets at the edge of the field. */
+    if (t > 110) {
+        fill_rect(fb, 224, 186, 10, 7, RGB(210, 142, 72));
+        fill_rect(fb, 227, 182, 7, 5, RGB(224, 156, 84));
+        put_px(fb, 230, 184, RGB(30, 26, 22));
+        fill_rect(fb, 294, 184, 9, 8, C_WHITE);
+        fill_rect(fb, 298, 180, 5, 5, C_WHITE);
+        fill_rect(fb, 300, 178, 2, 3, RGB(214, 58, 52));
+    }
+
+    /* Wooden sign / logo. */
+    if (t >= 70) {
+        int y = 52 + (t < 110 ? (110 - t) / 2 : 0);
+        int x = 42, w = 236, h = 104;
+        fill_rect(fb, x, y, w, h, C_GOLD);
+        fill_rect(fb, x + 2, y + 2, w - 4, h - 4, C_HUD);
+        fill_rect(fb, x + 4, y + 4, w - 8, 1, C_HUD_L);
+        for (int yy = y + 12; yy < y + h - 8; yy += 14) {
+            fill_rect(fb, x + 6, yy, w - 12, 1, RGB(68, 48, 34));
+        }
+        put_px(fb, x + 8, y + 8, C_GOLD);
+        put_px(fb, x + w - 9, y + 8, C_GOLD);
+        put_px(fb, x + 8, y + h - 9, C_GOLD);
+        put_px(fb, x + w - 9, y + h - 9, C_GOLD);
+        draw_text_big_shadow(fb, 100, y + 16, "mini farm", C_GOLD);
+        draw_item_icon(fb, 64, y + 18, 0, 1);
+        draw_shell(fb, x + w - 76, y + 18);
+        draw_text_big_shadow(fb, 82, y + 52, "a little life", C_WHITE);
+        if (t >= TITLE_END) {
+            draw_text_big_shadow(fb, 116, y + 78, "press A", C_WHITE);
+        }
+    }
+
+    if (t == TITLE_END) {
+        put_px(fb, 8, 8, RGB(120, 140, 120));
+    }
 }
 
 static void draw_ending(uint16_t *fb)
@@ -3836,6 +3930,7 @@ static void game_new(void)
     palette_set(season);
     tiles_build();
     state = ST_TITLE;
+    title_t = 0;
     message = 0;
     message_timer = 0;
     shop_open = 0;
@@ -3966,6 +4061,7 @@ void game_init(void)
         game_new();
     }
     state = ST_TITLE;
+    title_t = 0;
 
     a_prev = b_prev = menu_prev = up_prev = down_prev = 0;
     time_ticks = 0;
@@ -4014,6 +4110,8 @@ int game_update(const Input *in)
         if (a_edge) {
             state = ST_PLAY;
             set_message(boot_loaded ? "welcome back" : "goal 500g");
+        } else if (title_t < TITLE_END) {
+            title_t++;
         }
         return 1;
     }
@@ -4753,6 +4851,12 @@ static void draw_dusk(uint16_t *fb)
 
 void game_render(uint16_t *fb)
 {
+    if (state == ST_TITLE) {
+        view_num = view_den = 1;
+        draw_title(fb, title_t);
+        return;
+    }
+
     if (state == ST_WIN) {
         draw_ending(fb);
         return;
@@ -4894,12 +4998,6 @@ void game_render(uint16_t *fb)
     view_num = view_den = 1;
     if (!scene_indoor[scene_id]) draw_weather(fb);
     draw_dusk(fb);
-
-    if (state == ST_TITLE) {
-        draw_title(fb);
-        if (fade_timer > 0) fill_rect(fb, 0, 0, GAME_W, GAME_H, C_BLACK);
-        return;
-    }
 
     draw_hud(fb);
     if (fish_state != FISH_IDLE) {

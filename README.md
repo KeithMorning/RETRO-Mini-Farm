@@ -83,6 +83,8 @@ The game is designed to be readable by a young child:
 ### Art, audio and secrets
 
 - Procedural pixel art, warm palette, portraits, animated water, dusk and weather
+- A procedural **startup animation** (sky, sun, farmhouse, crops and pets) that
+  releases no assets after it ends
 - PWM sound effects on the Arcade speaker
 - Save version 5 with migration from older saves
 - **8 hidden moments**:

@@ -17,10 +17,17 @@ LIBOPENCM3_REF ?= v0.8.0
 LIBOPENCM3_A := $(LIBOPENCM3_DIR)/lib/libopencm3_stm32f4.a
 LDLIBS  := $(LIBOPENCM3_A)
 
+# Host build (simulator + regression tests). Shared objects avoid recompiling
+# the large game.c once per test binary.
+HOSTCFLAGS := -O1 -std=gnu11 -Isrc -Wall -Wextra
+HOST_OBJ   := build/host
+HOST_COMMON := $(HOST_OBJ)/game.o $(HOST_OBJ)/font8.o $(HOST_OBJ)/save_stub.o $(HOST_OBJ)/sound_stub.o
+HOST_TEST   := $(HOST_COMMON) $(HOST_OBJ)/save_file.o
+
 SRCS    := src/startup.c src/main.c src/game.c src/font8.c src/save.c
 OBJS    := $(patsubst src/%.c,build/%.o,$(SRCS))
 
-.PHONY: all clean flash size sim test deps
+.PHONY: all clean flash size sim test deps host-test-objs
 
 all: build/app.uf2
 
@@ -59,7 +66,20 @@ flash: build/app.uf2
 	sync
 	@echo "copied to ARCADE-F4; device should reboot"
 
-test:
+$(HOST_OBJ):
+	mkdir -p $@
+
+$(HOST_OBJ)/%.o: src/%.c | $(HOST_OBJ)
+	$(HOSTCC) $(HOSTCFLAGS) -c -o $@ $<
+
+$(HOST_OBJ)/%.o: sim/%.c | $(HOST_OBJ)
+	$(HOSTCC) $(HOSTCFLAGS) -c -o $@ $<
+
+$(HOST_OBJ)/game.o: src/game.h src/save.h src/sound.h
+
+host-test-objs: $(HOST_TEST)
+
+test: host-test-objs
 	bash sim/run_tests.sh
 
 sim: sim/sim
@@ -67,8 +87,8 @@ sim: sim/sim
 	cd sim && ./sim
 	python3 tools/fb2png.py sim/out
 
-sim/sim: sim/main.c src/game.c src/font8.c sim/save_stub.c sim/sound_stub.c src/game.h src/save.h
-	$(HOSTCC) -O2 -std=gnu11 -Isrc -o sim/sim sim/main.c src/game.c src/font8.c sim/save_stub.c sim/sound_stub.c
+sim/sim: sim/main.c $(HOST_COMMON)
+	$(HOSTCC) $(HOSTCFLAGS) -o $@ sim/main.c $(HOST_COMMON)
 
 clean:
 	rm -rf build sim/sim sim/out
