@@ -1,4 +1,5 @@
 /* Capture a focused gameplay reel for the Douyin trailer.
+   The first 210 frames are the full startup animation.
    Writes 320x240 RGB24 frames to sim/out/demo.rgb. */
 #include <stdio.h>
 #include <string.h>
@@ -41,6 +42,14 @@ static void tap(Input *in, uint8_t *field)
     emit();
 }
 
+static void face(Input *in, uint8_t *dir)
+{
+    *dir = 1;
+    game_update(in);
+    emit();
+    *dir = 0;
+}
+
 int main(void)
 {
     mkdir("out", 0755);
@@ -56,27 +65,40 @@ int main(void)
         game_update(&in);
         emit();
     }
-
     tap(&in, &in.a);
 
-    /* Farm: face the camera, then till / plant / water. */
+    /* Farm: face the camera, till, plant, water. */
     game_debug_warp(GAME_SCENE_FARM, 13, 7);
     game_debug_tool(1);
-    in.down = 1; game_update(&in); emit(); in.down = 0;
-    cap(&in, 8);
-    tap(&in, &in.a);              /* till */
+    face(&in, &in.down);
     cap(&in, 10);
+    tap(&in, &in.a);
+    cap(&in, 15);
     game_debug_select(0);
-    tap(&in, &in.a);              /* plant */
-    cap(&in, 10);
+    tap(&in, &in.a);
+    cap(&in, 15);
     game_debug_tool(2);
-    tap(&in, &in.a);              /* water */
-    cap(&in, 20);
+    tap(&in, &in.a);
+    cap(&in, 23);
 
-    /* Town: front-facing player, Mira portrait and dialogue. */
+    /* Fishing minigame. */
+    game_debug_rod();
+    game_debug_tool(3);
+    game_debug_warp(GAME_SCENE_BEACH, 20, 15);
+    in.up = 1; game_update(&in); emit(); in.up = 0;
+    tap(&in, &in.a);
+    cap(&in, 20);
+    game_debug_fish_bite();
+    cap(&in, 10);
+    tap(&in, &in.a);
+    cap(&in, 60);
+    tap(&in, &in.b);
+    cap(&in, 5);
+
+    /* Town: front-facing player, Mira portrait, story. */
     game_debug_time(10 * 60);
     game_debug_warp(GAME_SCENE_TOWN, 19, 16);
-    in.down = 1; game_update(&in); emit(); in.down = 0;
+    face(&in, &in.down);
     cap(&in, 10);
     tap(&in, &in.a);
     cap(&in, 80);
@@ -86,7 +108,7 @@ int main(void)
     /* Pets and the little dinosaur. */
     game_debug_fill_pets();
     game_debug_warp(GAME_SCENE_HOME, 10, 10);
-    in.down = 1; game_update(&in); emit(); in.down = 0;
+    face(&in, &in.down);
     cap(&in, 99);
 
     /* Mine floor 2 and a sword swing. */
@@ -94,11 +116,11 @@ int main(void)
     game_debug_tool(4);
     game_debug_warp(GAME_SCENE_MINE, 10, 3);
     in.up = 1; game_update(&in); emit(); in.up = 0;
-    tap(&in, &in.a);              /* down the ladder */
+    tap(&in, &in.a);
     cap(&in, 50);
     game_debug_warp(GAME_SCENE_MINE, 5, 5);
-    in.down = 1; game_update(&in); emit(); in.down = 0;
-    tap(&in, &in.a);              /* swing */
+    face(&in, &in.down);
+    tap(&in, &in.a);
     cap(&in, 63);
 
     /* Year-end goal. */

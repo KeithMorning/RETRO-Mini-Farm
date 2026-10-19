@@ -26,17 +26,18 @@ const monoFont = '"Courier New", "SFMono-Regular", monospace';
 const scenes = [
   { from: 0, to: 75, zh: "一个小农场。", en: "a little farm." },
   { from: 75, to: 210, zh: "从清晨开始。", en: "wake up." },
-  { from: 210, to: 270, zh: "种下第一颗种子。", en: "grow." },
-  { from: 270, to: 367, zh: "去认识三个朋友。", en: "three friends." },
-  { from: 367, to: 467, zh: "小猫、小鸡、小恐龙。", en: "little friends." },
-  { from: 467, to: 586, zh: "下到矿洞第二层。", en: "go deeper." },
-  { from: 586, to: 630, zh: "第一年，开始了。", en: "year one." },
-  { from: 630, to: 666, zh: "一个小农场，一整年。", en: "one little year." },
+  { from: 210, to: 282, zh: "16 种作物，亲手种下。", en: "16 crops. grow." },
+  { from: 282, to: 384, zh: "去海边，抛一竿。", en: "cast a line." },
+  { from: 384, to: 484, zh: "去认识三个朋友。", en: "three friends." },
+  { from: 484, to: 584, zh: "小猫、小鸡、小恐龙。", en: "little friends." },
+  { from: 584, to: 703, zh: "下到矿洞第二层。", en: "go deeper." },
+  { from: 703, to: 750, zh: "第一年，开始了。", en: "year one." },
+  { from: 750, to: 783, zh: "一个小农场，一整年。", en: "one little year." },
 ];
 
 const Background: React.FC = () => {
   const frame = useCurrentFrame();
-  const glow = interpolate(frame, [0, 788], [0.35, 0.7], {
+  const glow = interpolate(frame, [0, 903], [0.35, 0.7], {
     extrapolateRight: "clamp",
   });
   return (
@@ -309,7 +310,7 @@ const SceneCaption: React.FC<{ frame: number }> = ({ frame }) => {
     interpolate(local, [0, 10, len - 12, len], [0, 1, 1, 0], {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
-    }) * interpolate(frame, [620, 635], [1, 0], {
+    }) * interpolate(frame, [735, 748], [1, 0], {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
     });
@@ -359,12 +360,12 @@ const SceneCaption: React.FC<{ frame: number }> = ({ frame }) => {
 
 const EndCard: React.FC<{ frame: number }> = ({ frame }) => {
   const { fps } = useVideoConfig();
-  const opacity = interpolate(frame, [620, 640], [0, 1], {
+  const opacity = interpolate(frame, [750, 770], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
   const scale = spring({
-    frame: frame - 620,
+    frame: frame - 750,
     fps,
     config: { damping: 14, stiffness: 90 },
   });
