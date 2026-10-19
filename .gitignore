@@ -43,3 +43,5 @@ trailer/out/
 trailer/public/*.mp4
 trailer/public/*.wav
 trailer/public/*.png
+
+native/sim/front_capture
