@@ -117,6 +117,7 @@ const DeviceIntro: React.FC = () => {
     fps,
     config: { damping: 14, stiffness: 80 },
   });
+  const deviceScale = 0.96 + 0.04 * Math.max(0, Math.min(1, pop));
   const textY = interpolate(frame, [8, 28], [26, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
@@ -154,8 +155,8 @@ const DeviceIntro: React.FC = () => {
           border: "6px solid #087f92",
           boxShadow:
             "0 34px 90px rgba(0,0,0,.55), inset 0 3px 0 rgba(255,255,255,.55), inset 0 -10px 30px rgba(0,70,80,.35)",
-          scale: pop,
-          rotate: interpolate(frame, [0, 24], ["-3deg", "0deg"], {
+          scale: deviceScale,
+          rotate: interpolate(frame, [0, 24], ["-2deg", "0deg"], {
             extrapolateLeft: "clamp",
             extrapolateRight: "clamp",
           }),
