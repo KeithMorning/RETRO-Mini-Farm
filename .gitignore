@@ -30,3 +30,7 @@ native/third_party/
 
 # local release packaging (upload as GitHub Release assets instead)
 dist/
+
+native/sim/record_demo
+native/sim/encode_video
+native/sim/extract_frame
