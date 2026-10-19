@@ -14,6 +14,10 @@ It is written in **bare-metal C** for the STM32F412RE: no game engine, no JavaSc
 
 You inherit a small farm, grow crops through four seasons, make friends in town, fish at the beach, upgrade your house, adopt a cat or a chicken, and eventually unlock a little mine.
 
+**Goal:** bring the town back to life. Finish all three storylines and become
+3-heart friends with Mira, Tom and Lily before the end of year one. There is
+no money finish line; coins are for upgrades, not for winning.
+
 The game is designed to be readable by a young child:
 
 - All in-game text is **lowercase**
@@ -30,7 +34,7 @@ The game is designed to be readable by a young child:
 - Plant, water, harvest, ship produce, sleep and grow crops overnight
 - Weather: sunny, rain, snow
 - Energy, water can capacity, shipping bin, seed shop
-- Seasonal and yearly endings
+- A year-one community ending (no money finish line)
 
 ### Town and relationships
 

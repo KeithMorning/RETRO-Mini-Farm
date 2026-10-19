@@ -11,7 +11,7 @@ mkdir -p "$OBJ"
 # Ensure shared game/font/save/audio objects exist and are up to date.
 make -s host-test-objs
 
-tests="save_test gameplay_test menu_test upgrade_test season_test beach_test pet_test story_test mine_test easter_test"
+tests="save_test gameplay_test menu_test upgrade_test season_test beach_test pet_test story_test mine_test easter_test goal_test"
 
 for t in $tests; do
     case "$t" in

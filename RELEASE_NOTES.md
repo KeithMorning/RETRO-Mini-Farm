@@ -20,6 +20,12 @@ upgrade a house, adopt a cat and a chicken, and unlock a little mine.
 The save is in a separate flash sector. Normal firmware upgrades keep the
 farm.
 
+## Goal
+
+There is no 500g finish line. Bring the town back to life: finish all three
+storylines and reach **3 hearts with Mira, Tom and Lily** before the end of
+year one. A best-friends ending is available for 5 hearts and the dinosaur.
+
 ## Highlights
 
 - **Four seasons × 28 days**, 14 crops, rain and snow

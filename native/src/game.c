@@ -1455,7 +1455,8 @@ static int player_near_bed(void)
     int py = (player_y + 12) / TILE;
     for (int dy = -1; dy <= 1; dy++) {
         for (int dx = -1; dx <= 1; dx++) {
-            if (map_get(px + dx, py + dy) == T_BED) return 1;
+            uint8_t bt = map_get(px + dx, py + dy);
+            if (bt == T_BED || bt == T_BED2) return 1;
         }
     }
     return 0;
@@ -2768,12 +2769,12 @@ static void draw_title(uint16_t *fb, int t)
 static void draw_ending(uint16_t *fb)
 {
     fill_rect(fb, 0, 0, GAME_W, GAME_H, C_BLACK);
-    if (ending == 1) draw_text_big_shadow(fb, 112, 60, "spring!", C_GOLD);
-    else draw_text_big_shadow(fb, 88, 60, "year one!", C_GOLD);
-    draw_text_big_shadow(fb, 60, 100, "you did it!", C_WHITE);
-    draw_num_big_shadow(fb, 100, 130, coins, C_GOLD);
-    draw_text_big_shadow(fb, 160, 130, "g", C_GOLD);
-    draw_text_big_shadow(fb, 100, 164, "press A", C_WHITE);
+    if (ending == 3) draw_text_big_shadow(fb, 82, 56, "best friends!", C_GOLD);
+    else draw_text_big_shadow(fb, 106, 56, "year one!", C_GOLD);
+    draw_text_big_shadow(fb, 46, 96, "the town is smiling", C_WHITE);
+    draw_text_big_shadow(fb, 40, 128, "3 stories  3 friends", C_WHITE);
+    if (ending == 3) draw_text_big_shadow(fb, 82, 160, "dino too!", C_GOLD);
+    draw_text_big_shadow(fb, 116, 200, "press A", C_WHITE);
 }
 
 /* --- weather ----------------------------------------------------------- */
@@ -3448,16 +3449,13 @@ static void sleep_night(void)
     game_to_save(&sd);
     save_write(&sd);
 
-    int best = 0;
-    for (int i = 0; i < 3; i++) if (npc_points[i] > best) best = npc_points[i];
     int all = (npc_points[0] >= 60 && npc_points[1] >= 60 && npc_points[2] >= 60);
 
-    if (old_season == 0 && old_day == 28 && coins >= 500 && best >= 60) {
-        ending = 1;
-        state = ST_WIN;
-    }
-    if (old_season == 3 && old_day == 28 && coins >= 3000 && all) {
-        ending = 2;
+    /* No money finish line. The year-one goal is to bring the town back:
+       finish all three storylines and become 3-heart friends with everyone. */
+    if (old_season == 3 && old_day == 28 && all_stories_done() && all) {
+        int best = (npc_points[0] >= 100 && npc_points[1] >= 100 && npc_points[2] >= 100);
+        ending = (best && dino_unlocked) ? 3 : 2;
         state = ST_WIN;
     }
 }
@@ -4109,7 +4107,7 @@ int game_update(const Input *in)
     if (state == ST_TITLE) {
         if (a_edge) {
             state = ST_PLAY;
-            set_message(boot_loaded ? "welcome back" : "goal 500g");
+            set_message(boot_loaded ? "welcome back" : "help the town");
         } else if (title_t < TITLE_END) {
             title_t++;
         }
