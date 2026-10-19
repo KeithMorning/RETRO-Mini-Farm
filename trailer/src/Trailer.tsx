@@ -124,15 +124,8 @@ const DeviceIntro: React.FC = () => {
 
   return (
     <AbsoluteFill style={{ opacity: fade, zIndex: 20 }}>
-      <div style={{ position: "absolute", left: 80, right: 80, top: 150, textAlign: "center" }}>
-        <div
-          style={{
-            color: GOLD,
-            fontFamily: monoFont,
-            fontSize: 24,
-            letterSpacing: 8,
-          }}
-        >
+      <div style={{ position: "absolute", left: 80, right: 80, top: 142, textAlign: "center" }}>
+        <div style={{ color: GOLD, fontFamily: monoFont, fontSize: 24, letterSpacing: 8 }}>
           ELECFREAKS
         </div>
         <div
@@ -152,13 +145,15 @@ const DeviceIntro: React.FC = () => {
         style={{
           position: "absolute",
           left: 270,
-          top: 390,
+          top: 380,
           width: 540,
-          height: 790,
-          borderRadius: 64,
-          background: "linear-gradient(145deg, #f1dfb7 0%, #dfc291 55%, #c8a370 100%)",
-          border: "6px solid #8f643d",
-          boxShadow: "0 30px 80px rgba(0,0,0,.55), inset 0 2px 0 rgba(255,255,255,.5)",
+          height: 810,
+          borderRadius: 82,
+          background:
+            "linear-gradient(145deg, #4be0ed 0%, #18c4d7 40%, #0aa5bb 100%)",
+          border: "6px solid #087f92",
+          boxShadow:
+            "0 34px 90px rgba(0,0,0,.55), inset 0 3px 0 rgba(255,255,255,.55), inset 0 -10px 30px rgba(0,70,80,.35)",
           scale: pop,
           rotate: interpolate(frame, [0, 24], ["-3deg", "0deg"], {
             extrapolateLeft: "clamp",
@@ -170,16 +165,16 @@ const DeviceIntro: React.FC = () => {
           style={{
             position: "absolute",
             left: 42,
-            top: 44,
+            top: 42,
             width: 456,
-            height: 342,
-            background: "#201b16",
-            borderRadius: 18,
+            height: 344,
+            background: "#161a25",
+            borderRadius: 20,
             padding: 14,
-            boxShadow: "inset 0 0 30px rgba(0,0,0,.8)",
+            boxShadow: "inset 0 0 34px rgba(0,0,0,.85)",
           }}
         >
-          <div style={{ width: "100%", height: "100%", overflow: "hidden", borderRadius: 8 }}>
+          <div style={{ width: "100%", height: "100%", overflow: "hidden", borderRadius: 10 }}>
             <Img
               src={staticFile("farm.png")}
               style={{
@@ -192,39 +187,95 @@ const DeviceIntro: React.FC = () => {
           </div>
         </div>
 
-        <div style={{ position: "absolute", left: 82, top: 490 }}>
-          <div style={{ position: "absolute", left: 38, top: 0, width: 34, height: 114, background: "#3b3328", borderRadius: 8 }} />
-          <div style={{ position: "absolute", left: 0, top: 40, width: 110, height: 34, background: "#3b3328", borderRadius: 8 }} />
-          <div style={{ position: "absolute", left: 43, top: 45, width: 24, height: 24, background: "#d5c09a", borderRadius: 4 }} />
+        <div style={{ position: "absolute", left: 6, top: 8, width: 10, height: 10, borderRadius: "50%", background: "#d8f6f7", boxShadow: "0 0 8px #b9ffff" }} />
+
+        <div style={{ position: "absolute", left: 76, top: 498, width: 150, height: 150 }}>
+          <div style={{ position: "absolute", left: 58, top: 0, width: 36, height: 150, borderRadius: 10, background: "#f7f4ea", boxShadow: "inset 0 -4px 0 #d8d3c4, 0 5px 0 #0d8496" }} />
+          <div style={{ position: "absolute", left: 0, top: 58, width: 150, height: 36, borderRadius: 10, background: "#f7f4ea", boxShadow: "inset 0 -4px 0 #d8d3c4, 0 5px 0 #0d8496" }} />
+          <div style={{ position: "absolute", left: 68, top: 68, width: 16, height: 16, borderRadius: 4, background: "#d9d4c5" }} />
         </div>
 
-        <div style={{ position: "absolute", right: 74, top: 508, display: "flex", gap: 26 }}>
-          <div style={{ width: 82, height: 82, borderRadius: "50%", background: "#b44f49", border: "5px solid #7e342f", boxShadow: "inset 0 4px 0 rgba(255,255,255,.25)" }} />
-          <div style={{ width: 82, height: 82, borderRadius: "50%", background: "#b44f49", border: "5px solid #7e342f", boxShadow: "inset 0 4px 0 rgba(255,255,255,.25)", marginTop: 36 }} />
+        <div style={{ position: "absolute", left: 244, top: 486, width: 108, height: 30, borderRadius: 15, background: "#ece9df", boxShadow: "inset 0 -3px 0 #c9c4b6" }} />
+        <div
+          style={{
+            position: "absolute",
+            left: 266,
+            top: 493,
+            color: "#9b978b",
+            fontFamily: monoFont,
+            fontSize: 12,
+            letterSpacing: 1,
+          }}
+        >
+          menu
+        </div>
+        <div
+          style={{
+            position: "absolute",
+            left: 370,
+            top: 488,
+            width: 28,
+            height: 28,
+            borderRadius: "50%",
+            background: "#ece9df",
+            boxShadow: "inset 0 -3px 0 #c9c4b6",
+          }}
+        />
+
+        <div
+          style={{
+            position: "absolute",
+            left: 382,
+            top: 538,
+            width: 82,
+            height: 82,
+            borderRadius: "50%",
+            background: "#f8f5eb",
+            border: "4px solid #dad4c6",
+            boxShadow: "0 5px 0 #0d8496",
+            color: "#138fa3",
+            fontFamily: titleFont,
+            fontSize: 36,
+            lineHeight: "74px",
+            textAlign: "center",
+          }}
+        >
+          A
+        </div>
+        <div
+          style={{
+            position: "absolute",
+            left: 292,
+            top: 590,
+            width: 82,
+            height: 82,
+            borderRadius: "50%",
+            background: "#f8f5eb",
+            border: "4px solid #dad4c6",
+            boxShadow: "0 5px 0 #0d8496",
+            color: "#138fa3",
+            fontFamily: titleFont,
+            fontSize: 36,
+            lineHeight: "74px",
+            textAlign: "center",
+          }}
+        >
+          B
         </div>
 
-        <div style={{ position: "absolute", left: 236, top: 552, width: 58, height: 18, background: "#8f643d", borderRadius: 10 }} />
-        <div style={{ position: "absolute", left: 208, top: 704, color: "#8b643b", fontFamily: monoFont, fontSize: 17, letterSpacing: 3 }}>
-          ELECFREAKS
-        </div>
-        <div style={{ position: "absolute", left: 208, top: 728, color: "#5f452e", fontFamily: monoFont, fontSize: 14, letterSpacing: 4 }}>
+        <div
+          style={{
+            position: "absolute",
+            left: 214,
+            top: 724,
+            color: "rgba(0,92,104,.55)",
+            fontFamily: monoFont,
+            fontSize: 13,
+            letterSpacing: 4,
+          }}
+        >
           RETRO ARCADE
         </div>
-
-        {[0, 1, 2, 3, 4].map((i) => (
-          <div
-            key={i}
-            style={{
-              position: "absolute",
-              right: 48,
-              top: 646 + i * 18,
-              width: 42,
-              height: 5,
-              borderRadius: 4,
-              background: "#a47d51",
-            }}
-          />
-        ))}
       </div>
 
       <div
