@@ -38,4 +38,4 @@ npx remotion render RetroMiniFarmTrailer out/retro-mini-farm-douyin.mp4 \
   --codec=h264 --crf=18 --concurrency=4
 ```
 
-The final MP4 is 1080×1920, 30 fps, 668 frames (22.27 s), with AAC audio.
+The final MP4 is 1080×1920, 30 fps, 788 frames (26.27 s), with AAC audio.

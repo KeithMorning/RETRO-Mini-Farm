@@ -42,3 +42,4 @@ trailer/node_modules/
 trailer/out/
 trailer/public/*.mp4
 trailer/public/*.wav
+trailer/public/*.png
