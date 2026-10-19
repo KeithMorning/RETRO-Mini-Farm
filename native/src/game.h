@@ -46,6 +46,7 @@ void game_debug_day(int d);
 void game_debug_play(void);
 void game_debug_fish_bite(void);
 void game_debug_give_fish(int type, int n);
+void game_debug_rod(void);
 int game_debug_coins_now(void);
 int game_debug_house_now(void);
 void game_debug_set_heart(int i, int p);

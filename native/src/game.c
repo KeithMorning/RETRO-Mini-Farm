@@ -310,6 +310,7 @@ static uint8_t story[3];
 static uint8_t shell_count;
 static uint8_t ore_count;
 static int player_hp = 3;
+static int mine_floor = 1;
 static int slime_x[3], slime_y[3], slime_hp[3], slime_alive[3];
 static int slime_hit_cd;
 static const char *pet_name[3] = {"none", "cat", "chicken"};
@@ -324,6 +325,9 @@ static const uint8_t shell_y[4] = {18, 22, 24, 10};
 
 static const int house_cost[5] = {300, 1000, 2500, 5000, 0};
 static const int can_cost[3] = {200, 600, 0};
+static const int rod_cost[2] = {400, 1200};
+static const int sword_cost[2] = {350, 1000};
+static int rod_level, sword_level;
 static const int can_cap[3] = {15, 25, 40};
 static uint8_t bin_items[ITEM_COUNT];
 static uint8_t seeds[ITEM_COUNT], produce[ITEM_COUNT];
@@ -1367,15 +1371,28 @@ static void build_mine(void)
         mine_tiles[y * INT_W] = T_MINE_WALL;
         mine_tiles[y * INT_W + INT_W - 1] = T_MINE_WALL;
     }
-    const uint8_t rocks[][2] = {{4,4},{6,7},{12,5},{14,9},{5,10},{15,4}};
-    for (unsigned i = 0; i < sizeof(rocks) / 2; i++) {
-        mine_tiles[rocks[i][1] * INT_W + rocks[i][0]] = T_ROCK;
+
+    if (mine_floor == 1) {
+        const uint8_t rocks[][2] = {{4,4},{6,7},{12,5},{14,9},{5,10},{15,4}};
+        for (unsigned i = 0; i < sizeof(rocks) / 2; i++)
+            mine_tiles[rocks[i][1] * INT_W + rocks[i][0]] = T_ROCK;
+        mine_tiles[4 * INT_W + 8] = T_ORE;
+        mine_tiles[7 * INT_W + 15] = T_ORE;
+        mine_tiles[10 * INT_W + 5] = T_ORE;
+    } else {
+        const uint8_t rocks[][2] = {{3,4},{5,6},{7,4},{11,4},{14,6},{16,5},
+                                    {4,9},{6,11},{12,9},{15,10},{17,8},{9,12}};
+        for (unsigned i = 0; i < sizeof(rocks) / 2; i++)
+            mine_tiles[rocks[i][1] * INT_W + rocks[i][0]] = T_ROCK;
+        mine_tiles[3 * INT_W + 12] = T_ORE;
+        mine_tiles[6 * INT_W + 4] = T_ORE;
+        mine_tiles[8 * INT_W + 16] = T_ORE;
+        mine_tiles[11 * INT_W + 8] = T_ORE;
+        mine_tiles[5 * INT_W + 9] = T_ORE;
     }
-    mine_tiles[4 * INT_W + 8] = T_ORE;
-    mine_tiles[7 * INT_W + 15] = T_ORE;
-    mine_tiles[10 * INT_W + 5] = T_ORE;
-    mine_tiles[13 * INT_W + 10] = T_DOOR;
-    mine_tiles[13 * INT_W + 9] = T_LADDER;
+
+    mine_tiles[2 * INT_W + 10] = T_LADDER;   /* down / up */
+    mine_tiles[13 * INT_W + 10] = T_DOOR;   /* exit to town */
 }
 
 static void build_world(void)
@@ -1408,7 +1425,7 @@ static void mine_reset(void)
     for (int i = 0; i < 3; i++) {
         slime_x[i] = sx[i] * TILE;
         slime_y[i] = sy[i] * TILE;
-        slime_hp[i] = 2;
+        slime_hp[i] = 2 + (mine_floor - 1);
         slime_alive[i] = 1;
     }
     slime_hit_cd = 0;
@@ -2190,6 +2207,22 @@ static const char *npc_where(int i)
     return "home";
 }
 
+static int status_upg_count(void)
+{
+    int n = 2;
+    if (rod_owned) n++;
+    if (mine_unlocked()) n++;
+    return n;
+}
+
+static int status_upg_kind(int row)
+{
+    if (row == 0) return 0;
+    if (row == 1) return 1;
+    if (rod_owned && row == 2) return 2;
+    return 3;
+}
+
 static void draw_status(uint16_t *fb)
 {
     int x = 16, y = 44, w = 288, h = 184;
@@ -2255,33 +2288,41 @@ static void draw_status(uint16_t *fb)
         draw_text_big_shadow(fb, x + 16, y + 8, "upgrade", C_GOLD);
         draw_text_big_shadow(fb, x + 16, y + 32, "coins", C_WHITE);
         draw_gold(fb, x + 104, y + 32, coins);
+        draw_text_big_shadow(fb, x + 196, y + 32, "energy", C_WHITE);
+        draw_num_big_shadow(fb, x + 272, y + 32, energy_max, C_ENERGY);
 
-        for (int i = 0; i < 2; i++) {
-            int yy = y + 64 + i * 30;
+        int rows = status_upg_count();
+        if (status_upg_sel >= rows) status_upg_sel = rows - 1;
+        for (int i = 0; i < rows; i++) {
+            int yy = y + 64 + i * 28;
             if (i == status_upg_sel) fill_rect(fb, x + 8, yy - 4, w - 16, 24, C_HUD_L);
-            if (i == 0) {
+            int kind = status_upg_kind(i);
+            if (kind == 0) {
                 draw_text_big_shadow(fb, x + 16, yy, "house", C_WHITE);
                 draw_text_big_shadow(fb, x + 100, yy, "lv", C_WHITE);
                 draw_num_big_shadow(fb, x + 136, yy, house_level, C_GOLD);
-                if (house_level >= 4) {
-                    draw_text_big_shadow(fb, x + 208, yy, "max", C_GOLD);
-                } else {
-                    draw_gold(fb, x + 196, yy, house_cost[house_level]);
-                }
-            } else {
+                if (house_level >= 4) draw_text_big_shadow(fb, x + 208, yy, "max", C_GOLD);
+                else draw_gold(fb, x + 196, yy, house_cost[house_level]);
+            } else if (kind == 1) {
                 draw_text_big_shadow(fb, x + 16, yy, "can", C_WHITE);
                 draw_text_big_shadow(fb, x + 76, yy, "cap", C_WHITE);
                 draw_num_big_shadow(fb, x + 124, yy, water_can_max, C_WATER_L);
-                if (can_level >= 2) {
-                    draw_text_big_shadow(fb, x + 208, yy, "max", C_GOLD);
-                } else {
-                    draw_gold(fb, x + 196, yy, can_cost[can_level]);
-                }
+                if (can_level >= 2) draw_text_big_shadow(fb, x + 208, yy, "max", C_GOLD);
+                else draw_gold(fb, x + 196, yy, can_cost[can_level]);
+            } else if (kind == 2) {
+                draw_text_big_shadow(fb, x + 16, yy, "rod", C_WHITE);
+                draw_text_big_shadow(fb, x + 76, yy, "lv", C_WHITE);
+                draw_num_big_shadow(fb, x + 112, yy, rod_level, C_GOLD);
+                if (rod_level >= 2) draw_text_big_shadow(fb, x + 208, yy, "max", C_GOLD);
+                else draw_gold(fb, x + 196, yy, rod_cost[rod_level]);
+            } else {
+                draw_text_big_shadow(fb, x + 16, yy, "sword", C_WHITE);
+                draw_text_big_shadow(fb, x + 88, yy, "lv", C_WHITE);
+                draw_num_big_shadow(fb, x + 124, yy, sword_level, C_GOLD);
+                if (sword_level >= 2) draw_text_big_shadow(fb, x + 208, yy, "max", C_GOLD);
+                else draw_gold(fb, x + 196, yy, sword_cost[sword_level]);
             }
         }
-
-        draw_text_big_shadow(fb, x + 16, y + 142, "energy", C_WHITE);
-        draw_num_big_shadow(fb, x + 100, y + 142, energy_max, C_ENERGY);
     }
 
     if (status_page == 3) {
@@ -2653,7 +2694,10 @@ static void draw_prompt(uint16_t *fb)
         else if ((t == T_GRASS || t == T_GRASS2) && scene_id == SC_FARM &&
                  plot_index(tx, ty) >= 0 && sel_kind == IT_HOE) s = "A till";
         else if (t == T_WATER) s = (sel_kind == IT_CAN) ? "A refill" : "select can";
-        if (scene_id == SC_MINE) s = (sel_kind == IT_SWORD) ? "A swing" : "select sword";
+        if (scene_id == SC_MINE) {
+            if (t == T_LADDER) s = (mine_floor == 1) ? "A down" : "A up";
+            else s = (sel_kind == IT_SWORD) ? "A swing" : "select sword";
+        }
     }
     if (!s) return;
 
@@ -2881,6 +2925,13 @@ static void start_fade(const Door *d)
         set_message("mine locked");
         return;
     }
+    if (d->target == SC_MINE) {
+        mine_floor = 1;
+        build_mine();
+    }
+    if (d->target == SC_TOWN && scene_id == SC_MINE) {
+        mine_floor = 1;
+    }
     fade_timer = 20;
     sound_play(SFX_DOOR);
     fade_scene = d->target;
@@ -2991,9 +3042,9 @@ static void fish_update(const Input *in, int a_edge, int b_edge)
             fish_timer = 900;
             fish_pos = 50;
             fish_vel = 2;
-            fish_zone_h = 36 - fish_type * 4;
+            fish_zone_h = 36 - fish_type * 4 + rod_level * 6;
             fish_green = 50;
-            fish_catch = 20;
+            fish_catch = 20 + rod_level * 5;
             return;
         }
         if (--fish_timer <= 0) {
@@ -3104,6 +3155,19 @@ static int use_tool(void)
         return 1;
     }
 
+    if (scene_id == SC_MINE && t == T_LADDER) {
+        mine_floor = (mine_floor == 1) ? 2 : 1;
+        build_mine();
+        scene_set(SC_MINE);
+        player_x = 10 * TILE;
+        player_y = 12 * TILE;
+        facing = 1;
+        save_now();
+        sound_play(SFX_DOOR);
+        set_message(mine_floor == 2 ? "floor 2" : "floor 1");
+        return 1;
+    }
+
     if (scene_id == SC_MINE && t != T_DOOR) {
         if (sel_kind != IT_SWORD) { set_message("select sword"); return 1; }
         if (t == T_ROCK || t == T_ORE) {
@@ -3130,7 +3194,7 @@ static int use_tool(void)
         for (int i = 0; i < 3; i++) {
             if (!slime_alive[i]) continue;
             if (iabs(slime_x[i] + 8 - hx) < 20 && iabs(slime_y[i] + 8 - hy) < 20) {
-                slime_hp[i]--;
+                slime_hp[i] -= 1 + sword_level;
                 if (slime_hp[i] <= 0) {
                     slime_alive[i] = 0;
                     set_message("slime down");
@@ -3740,6 +3804,48 @@ static void upgrade_can(void)
     set_message("can up");
 }
 
+static void upgrade_rod(void)
+{
+    if (!rod_owned || rod_level >= 2) {
+        status_open = 0;
+        set_message(rod_owned ? "rod max" : "need rod");
+        return;
+    }
+    int cost = rod_cost[rod_level];
+    if (coins < cost) {
+        status_open = 0;
+        set_message("not enough");
+        return;
+    }
+    coins -= cost;
+    rod_level++;
+    save_now();
+    status_open = 0;
+    sound_play(SFX_UPGRADE);
+    set_message("rod up");
+}
+
+static void upgrade_sword(void)
+{
+    if (!mine_unlocked() || sword_level >= 2) {
+        status_open = 0;
+        set_message(mine_unlocked() ? "sword max" : "mine locked");
+        return;
+    }
+    int cost = sword_cost[sword_level];
+    if (coins < cost) {
+        status_open = 0;
+        set_message("not enough");
+        return;
+    }
+    coins -= cost;
+    sword_level++;
+    save_now();
+    status_open = 0;
+    sound_play(SFX_UPGRADE);
+    set_message("sword up");
+}
+
 /* --- save -------------------------------------------------------------- */
 
 static void game_to_save(SaveData *d)
@@ -3766,13 +3872,14 @@ static void game_to_save(SaveData *d)
     d->pet_aff[1] = pet_aff[1];
     d->pet_fed = pet_fed;
     d->dino_unlocked = (uint8_t)dino_unlocked;
+    d->pet_pad[0] = (uint8_t)((rod_level & 3) | ((sword_level & 3) << 2));
     d->pad[1] = (uint8_t)((fish[0] & 15) | ((fish[1] & 15) << 4));
     d->pad[2] = (uint8_t)((fish[2] & 15) | ((fish[3] & 15) << 4));
     memcpy(d->story, story, sizeof(story));
     d->shell_count = shell_count;
     d->ore_count = ore_count;
     d->player_hp = (uint8_t)player_hp;
-    d->mine_floor = 1;
+    d->mine_floor = (uint8_t)mine_floor;
     d->mine_pad = secrets;
     memcpy(d->seeds, seeds, 16);
     memcpy(d->produce, produce, 16);
@@ -3839,6 +3946,8 @@ static void game_from_save(const SaveData *d)
     secrets = d->mine_pad;
     player_hp = d->player_hp ? d->player_hp : 3;
     if (player_hp > 3) player_hp = 3;
+    mine_floor = d->mine_floor;
+    if (mine_floor < 1 || mine_floor > 2) mine_floor = 1;
     for (int i = 0; i < 3; i++) if (story[i] > 4) story[i] = 4;
     for (int i = 0; i < 2; i++) {
         pet_x[i] = (10 + i * 3) * TILE;
@@ -3911,6 +4020,7 @@ static void game_new(void)
     pet_aff[0] = pet_aff[1] = 0;
     pet_fed = 0;
     dino_unlocked = 0;
+    rod_level = sword_level = 0;
     for (int i = 0; i < 2; i++) {
         pet_x[i] = (10 + i * 3) * TILE;
         pet_y[i] = 10 * TILE;
@@ -3926,6 +4036,7 @@ static void game_new(void)
     shell_count = 0;
     ore_count = 0;
     player_hp = 3;
+    mine_floor = 1;
     secrets = 0;
     wish_done = wish_rain = dolphin_done = dolphin_timer = cat_bed_block = 0;
     energy_max = 30;
@@ -4025,6 +4136,11 @@ void game_debug_season(int s)
 void game_debug_give(int crop_id, int n)
 {
     if (crop_id >= 1 && crop_id <= ITEM_COUNT) produce[crop_id - 1] += n;
+}
+
+void game_debug_rod(void)
+{
+    rod_owned = 1;
 }
 
 void game_debug_fill_pets(void)
@@ -4324,10 +4440,15 @@ int game_update(const Input *in)
             int d_edge = in->down && !down_prev;
             up_prev = in->up;
             down_prev = in->down;
-            if (u_edge || d_edge) status_upg_sel ^= 1;
+            int rows = status_upg_count();
+            if (u_edge) status_upg_sel = (status_upg_sel + rows - 1) % rows;
+            if (d_edge) status_upg_sel = (status_upg_sel + 1) % rows;
             if (a_edge) {
-                if (status_upg_sel == 0) upgrade_house();
-                else upgrade_can();
+                int kind = status_upg_kind(status_upg_sel);
+                if (kind == 0) upgrade_house();
+                else if (kind == 1) upgrade_can();
+                else if (kind == 2) upgrade_rod();
+                else upgrade_sword();
             }
             if (b_edge) status_open = 0;
             return 1;

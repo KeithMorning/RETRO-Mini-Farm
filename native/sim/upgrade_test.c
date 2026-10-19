@@ -42,5 +42,19 @@ int main(void){
  tap(&in,&in.a); tap(&in,&in.a); tap(&in,&in.a); tap(&in,&in.a);
  game_debug_warp(GAME_SCENE_FARM,9,9); shot("u10_house4_exterior"); printf("after h4: coins=%d house=%d\n",game_debug_coins_now(),game_debug_house_now());
  game_debug_warp(GAME_SCENE_HOME,10,8); shot("u11_house4_inside");
+ game_debug_coins(9999);
+ game_debug_unlock_mine();
+ game_debug_rod();
+ game_debug_warp(GAME_SCENE_HOME,8,4);
+ in.up=1; step(&in,1); in.up=0;
+ tap(&in,&in.a); tap(&in,&in.a); tap(&in,&in.a); tap(&in,&in.a); /* open upgrade */
+ shot("u12_tools");
+ tap(&in,&in.down); tap(&in,&in.down); tap(&in,&in.a); /* rod */
+ shot("u13_rod");
+ game_debug_warp(GAME_SCENE_HOME,8,4);
+ in.up=1; step(&in,1); in.up=0;
+ tap(&in,&in.a); tap(&in,&in.a); tap(&in,&in.a); tap(&in,&in.a);
+ tap(&in,&in.down); tap(&in,&in.down); tap(&in,&in.down); tap(&in,&in.a); /* sword */
+ shot("u14_sword");
  printf("upgrade test done\n"); return 0;
 }

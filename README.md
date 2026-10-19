@@ -70,8 +70,10 @@ The game is designed to be readable by a young child:
 ### Mine
 
 - Unlocked after all three storylines are complete
-- Town mine entrance, rocks, copper ore, slimes and a sword
+- Town mine entrance with **two floors**, rocks, copper ore, slimes and a sword
 - Health, enemy contact damage, respawn at home
+- A ladder leads to a deeper second floor with more ore and slimes
+- **Rod** upgrades widen the fishing zone; **sword** upgrades deal more damage
 - Ore and story progress are saved
 
 ### Inventory and tools
@@ -294,8 +296,6 @@ Older v1–v5 saves are migrated automatically on load. A new save is written wh
 
 ## Known limitations
 
-- The mine currently has one floor.
-- Tool upgrades beyond the water can are not implemented yet.
 - The simulator is not cycle-accurate; real hardware frame rate may differ.
 - Internal flash writes block the game briefly.
 

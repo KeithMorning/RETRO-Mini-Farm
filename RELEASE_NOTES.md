@@ -32,10 +32,10 @@ year one. A best-friends ending is available for 5 hearts and the dinosaur.
 - **Three NPCs** — Mira, Tom and Lily — with schedules, gifts, five hearts
   and three two-chapter storylines
 - **Beach and fishing**: shells, rod, four fish and a green-bar minigame
-- **Five house levels** and water-can upgrades
+- **Five house levels**, water-can upgrades, and rod / sword upgrades
 - **Cat, chicken and dinosaur**: daily feeding, half hearts, daily gifts,
   and a dinosaur that digs ore
-- **Mine**: unlocked after all three stories, with sword, copper ore and slimes
+- **Mine**: two floors unlocked after all three stories, with sword, copper ore and slimes
 - **30-slot bag** with tools, remembered selection and seed/produce names
 - **Hoe tilling**: turn the fenced grass into soil, and the tilled layout is saved
 - **Eight hidden moments**: fountain wish, dolphin, cat on bed, golden fish,
@@ -65,7 +65,6 @@ or complete a story quest.
   GitHub Release.
 - The ARM toolchain is not included. Source build instructions are in the
   repository README.
-- The mine currently has one floor.
 
 ## Credits
 

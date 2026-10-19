@@ -17,5 +17,8 @@ int main(void){
  game_debug_warp(GAME_SCENE_MINE,4,5);
  in.down=1; step(&in,1); in.down=0;
  tap(&in,&in.a); shot("mn2_rock");
+ game_debug_warp(GAME_SCENE_MINE,10,3);
+ in.up=1; step(&in,1); in.up=0;
+ tap(&in,&in.a); shot("mn3_floor2");
  printf("mine test done\n"); return 0;
 }
