@@ -34,3 +34,11 @@ dist/
 native/sim/record_demo
 native/sim/encode_video
 native/sim/extract_frame
+.agents/
+.claude/
+.npm-cache/
+skills-lock.json
+trailer/node_modules/
+trailer/out/
+trailer/public/*.mp4
+trailer/public/*.wav

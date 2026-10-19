@@ -83,7 +83,7 @@ int main(void)
     cap(&in, 16);
 
     /* Town and dialogue. */
-    game_debug_time(12 * 60);
+    game_debug_time(10 * 60);
     game_debug_warp(GAME_SCENE_TOWN, 19, 16);
     in.up = 1; game_update(&in); emit(); in.up = 0;
     cap(&in, 8);
