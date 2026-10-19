@@ -37,7 +37,7 @@ at it), then build.
    - **B** = gift selected crop/fish near NPC, or close panel
    - **Menu** = pause menu
    - bag is only opened from **Menu → bag**
-7. Preserve save compatibility. Current format is **v5**.
+7. Preserve save compatibility. Current format is **v6**.
 8. Keep static memory in mind:
    - RGB565 framebuffer: 320 × 240 × 2 = 150 KB
    - each 16×16 tile: 512 B of RAM
@@ -344,7 +344,7 @@ scaling and shadow work.
 ### Farming
 
 - 4 seasons × 28 days
-- 14 crops (crop id 0–13; 14 = fossil, 15 = egg as special items)
+- 16 crops (ids 0–15; ids 16 = fossil, 17 = egg as special items)
 - `plot_crop/growth/water[24]`
 - Plant only with a selected seed of the current season
 - Water only with the watering can selected
@@ -381,7 +381,8 @@ scaling and shadow work.
 - cat bowl round (`T_BOWL`), chicken bowl square (`T_BOWL2`)
 - full cat: daily fish; full chicken: daily egg
 - both full: `dino_unlocked`; dino digs one ore per sleep
-- save v5 fields: `pet_owned`, `pet_aff`, `pet_fed`, `dino_unlocked`
+- save v6 fields: `pet_owned`, `pet_aff`, `pet_fed`, `dino_unlocked`,
+  `seeds_ext[2]`, `produce_ext[2]`, `bin_ext[2]`, `tilled[3]`
 
 ### Mine
 
@@ -414,7 +415,7 @@ not saved.
 
 - `SAVE_MAGIC 0x4d464d31`
 - current `SAVE_VERSION 5`
-- `SaveData` is 188 bytes, 4-byte aligned
+- `SaveData` is 200 bytes, 4-byte aligned
 - CRC32 over the whole struct with `crc = 0`
 - stored at `0x08060000`, sector 7
 
@@ -427,8 +428,9 @@ Sizes/migrations:
 | 3 | 176 | story + shells |
 | 4 | 180 | ore/hp/mine |
 | 5 | 188 | pets/dino + secrets shared `mine_pad` |
+| 6 | 200 | 18 item slots + tilled field mask |
 
-`save_read()` accepts v1–v5 and zero-fills new fields.
+`save_read()` accepts v1–v6 and zero-fills/migrates new fields.
 When adding fields:
 
 1. Append to the struct.

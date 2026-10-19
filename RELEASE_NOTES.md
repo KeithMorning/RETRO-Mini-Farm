@@ -28,7 +28,7 @@ year one. A best-friends ending is available for 5 hearts and the dinosaur.
 
 ## Highlights
 
-- **Four seasons × 28 days**, 14 crops, rain and snow
+- **Four seasons × 28 days**, 16 crops (4 per season), rain and snow
 - **Three NPCs** — Mira, Tom and Lily — with schedules, gifts, five hearts
   and three two-chapter storylines
 - **Beach and fishing**: shells, rod, four fish and a green-bar minigame
@@ -37,10 +37,11 @@ year one. A best-friends ending is available for 5 hearts and the dinosaur.
   and a dinosaur that digs ore
 - **Mine**: unlocked after all three stories, with sword, copper ore and slimes
 - **30-slot bag** with tools, remembered selection and seed/produce names
+- **Hoe tilling**: turn the fenced grass into soil, and the tilled layout is saved
 - **Eight hidden moments**: fountain wish, dolphin, cat on bed, golden fish,
   fossil, NPC secrets, campfire and a mailbox letter
 - New **procedural startup animation** and a dedicated title illustration
-- PWM sound effects, save v5, automatic migration from v1–v4
+- PWM sound effects, save v6, automatic migration from v1–v5
 
 ## Controls
 
@@ -54,7 +55,7 @@ year one. A best-friends ending is available for 5 hearts and the dinosaur.
 
 ## Save compatibility
 
-The current save format is **v5**. Saves from v1–v4 are migrated
+The current save format is **v6**. Saves from v1–v5 are migrated
 automatically. A save is written when you sleep, use Menu → save, upgrade,
 or complete a story quest.
 
@@ -65,7 +66,6 @@ or complete a story quest.
 - The ARM toolchain is not included. Source build instructions are in the
   repository README.
 - The mine currently has one floor.
-- Hoe is currently a placeholder tool; field plots are already tilled.
 
 ## Credits
 

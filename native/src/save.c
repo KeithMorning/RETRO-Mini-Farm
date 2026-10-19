@@ -31,6 +31,30 @@ static uint32_t save_crc(SaveData d)
 #define SAVE_V2_SIZE 172
 #define SAVE_V3_SIZE 176
 #define SAVE_V4_SIZE 180
+#define SAVE_V5_SIZE 188
+
+static void migrate_legacy(SaveData *d)
+{
+    /* v5 and older had 16 item slots; items 14/15 were fossil/egg.
+       The 18-slot layout uses 14/15 for winter crops and 16/17 for those
+       special items. Old farms also had all 24 field tiles pre-tilled. */
+    d->seeds_ext[0] = 0;
+    d->seeds_ext[1] = 0;
+    d->produce_ext[0] = d->produce[14];
+    d->produce_ext[1] = d->produce[15];
+    d->produce[14] = 0;
+    d->produce[15] = 0;
+    d->bin_ext[0] = d->bin_items[14];
+    d->bin_ext[1] = d->bin_items[15];
+    d->bin_items[14] = 0;
+    d->bin_items[15] = 0;
+    memset(d->tilled, 0xFF, sizeof(d->tilled));
+    d->pad2[0] = d->pad2[1] = d->pad2[2] = 0;
+    if (((d->selected >> 5) & 7) == 6) {
+        int id = d->selected & 31;
+        if (id == 14 || id == 15) d->selected = (uint8_t)((6 << 5) | (id + 2));
+    }
+}
 
 int save_read(SaveData *d)
 {
@@ -48,6 +72,7 @@ int save_read(SaveData *d)
         if (crc32(old, sizeof(old)) != crc) return 0;
         memset(d, 0, sizeof(*d));
         memcpy(d, old, sizeof(old));
+        migrate_legacy(d);
         return 1;
     }
 
@@ -59,6 +84,19 @@ int save_read(SaveData *d)
         if (crc32(old, sizeof(old)) != crc) return 0;
         memset(d, 0, sizeof(*d));
         memcpy(d, old, sizeof(old));
+        migrate_legacy(d);
+        return 1;
+    }
+
+    if (version == 5) {
+        uint8_t old[SAVE_V5_SIZE];
+        memcpy(old, p, sizeof(old));
+        memcpy(&crc, old + 8, 4);
+        memset(old + 8, 0, 4);
+        if (crc32(old, sizeof(old)) != crc) return 0;
+        memset(d, 0, sizeof(*d));
+        memcpy(d, old, sizeof(old));
+        migrate_legacy(d);
         return 1;
     }
 
@@ -70,6 +108,7 @@ int save_read(SaveData *d)
         if (crc32(old, sizeof(old)) != crc) return 0;
         memset(d, 0, sizeof(*d));
         memcpy(d, old, sizeof(old));
+        migrate_legacy(d);
         return 1;
     }
 
@@ -81,6 +120,7 @@ int save_read(SaveData *d)
         if (crc32(old, sizeof(old)) != crc) return 0;
         memset(d, 0, sizeof(*d));
         memcpy(d, old, sizeof(old));
+        migrate_legacy(d);
         return 1;
     }
 

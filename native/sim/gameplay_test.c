@@ -49,6 +49,8 @@ int main(void)
     tap(&in, &in.b);          /* exit shop */
 
     game_debug_warp(GAME_SCENE_FARM, 13, 9);
+    game_debug_tool(1);       /* hoe */
+    tap(&in, &in.a);          /* till */
     game_debug_select(0);
     tap(&in, &in.a);          /* plant */
     shot(&in, "g1_plant");

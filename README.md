@@ -30,8 +30,9 @@ The game is designed to be readable by a young child:
 ### Farming
 
 - **4 seasons × 28 days**
-- **14 crops** with different prices, growth times and regrow crops
-- Plant, water, harvest, ship produce, sleep and grow crops overnight
+- **16 crops** (4 per season) with different prices, growth times and regrow crops
+- Till the fenced field with the hoe, then plant, water, harvest, ship
+  produce, sleep and grow crops overnight
 - Weather: sunny, rain, snow
 - Energy, water can capacity, shipping bin, seed shop
 - A year-one community ending (no money finish line)
@@ -90,7 +91,7 @@ The game is designed to be readable by a young child:
 - A procedural **startup animation** (sky, sun, farmhouse, crops and pets) that
   releases no assets after it ends
 - PWM sound effects on the Arcade speaker
-- Save version 5 with migration from older saves
+- Save version 6 with migration from v1–v5
 - **8 hidden moments**:
   - fountain wish
   - dolphin at the pier
@@ -281,19 +282,18 @@ tools/                UF2 inspection helper
 
 ## Save compatibility
 
-The current save format is **version 5**:
+The current save format is **version 6**:
 
-- farm, crops, coins, energy, water
+- farm, tilled plots, crops, coins, energy, water
 - house / can / rod / story progress
 - NPC hearts and gifts
 - bag selection, fish, eggs, fossils
 - pets, affection, dino, mine ore and health
 
-Older v1–v4 saves are migrated automatically on load. A new save is written when you sleep, use Menu → save, upgrade, or complete a story quest.
+Older v1–v5 saves are migrated automatically on load. A new save is written when you sleep, use Menu → save, upgrade, or complete a story quest.
 
 ## Known limitations
 
-- Hoe is currently a tool placeholder; the field plots are already tilled.
 - The mine currently has one floor.
 - Tool upgrades beyond the water can are not implemented yet.
 - The simulator is not cycle-accurate; real hardware frame rate may differ.

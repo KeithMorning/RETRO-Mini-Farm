@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #define SAVE_MAGIC   0x4d464d31u
-#define SAVE_VERSION 5u
+#define SAVE_VERSION 6u
 
 typedef struct {
     uint32_t magic;
@@ -54,6 +54,11 @@ typedef struct {
     uint8_t pet_fed;
     uint8_t dino_unlocked;
     uint8_t pet_pad[3];
+    uint8_t seeds_ext[2];
+    uint8_t produce_ext[2];
+    uint8_t bin_ext[2];
+    uint8_t tilled[3];
+    uint8_t pad2[3];
 } SaveData;
 
 int save_read(SaveData *d);

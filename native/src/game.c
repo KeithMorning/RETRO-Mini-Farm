@@ -9,6 +9,7 @@
 #define INT_W 20
 #define INT_H 15
 #define PLOTS 24
+#define ITEM_COUNT 18
 
 #define RGB(r, g, b) ((uint16_t)((((r) >> 3) << 11) | (((g) >> 2) << 5) | ((b) >> 3)))
 
@@ -70,7 +71,7 @@ typedef struct {
     uint16_t fruit;
 } CropDef;
 
-static const CropDef crops[16] = {
+static const CropDef crops[ITEM_COUNT] = {
     {"carrot",  2, 0, 10, 25, RGB(240, 140, 60)},
     {"potato",  3, 0, 15, 40, RGB(180, 132, 82)},
     {"cabbage", 4, 0, 20, 70, RGB(150, 200, 110)},
@@ -85,10 +86,12 @@ static const CropDef crops[16] = {
     {"yam",      5, 3, 30, 45, RGB(190, 150, 90)},
     {"pea",      4, 2, 20, 50, RGB(140, 210, 100)},
     {"root",     3, 0, 15, 35, RGB(210, 170, 120)},
+    {"snowpea",  5, 2, 25, 65, RGB(180, 226, 140)},
+    {"frostberry", 6, 0, 30, 90, RGB(176, 130, 208)},
     {"fossil",   0, 0, 120, 300, RGB(210, 196, 164)},
     {"egg",      0, 0, 50, 50, RGB(246, 240, 218)},
 };
-static const uint8_t season_crop_count[4] = {4, 4, 4, 2};
+static const uint8_t season_crop_count[4] = {4, 4, 4, 4};
 
 static const char *season_name[4] = {"spring", "summer", "fall", "winter"};
 
@@ -322,13 +325,14 @@ static const uint8_t shell_y[4] = {18, 22, 24, 10};
 static const int house_cost[5] = {300, 1000, 2500, 5000, 0};
 static const int can_cost[3] = {200, 600, 0};
 static const int can_cap[3] = {15, 25, 40};
-static uint8_t bin_items[16];
-static uint8_t seeds[16], produce[16];
+static uint8_t bin_items[ITEM_COUNT];
+static uint8_t seeds[ITEM_COUNT], produce[ITEM_COUNT];
+static uint32_t tilled_mask;
 static int weather;
 static int shop_open, shop_sel, shop_qty;
 static int bin_open, summary_open;
 static int menu_open, menu_page, menu_sel;
-static uint8_t summary_items[16];
+static uint8_t summary_items[ITEM_COUNT];
 static int summary_gold;
 static int status_open, status_page;
 static int dlg_open, dlg_npc, dlg_page, dlg_pages;
@@ -1096,7 +1100,7 @@ static void build_farm(void)
     }
     farm_tiles[9 * FARM_W + 10] = T_GATE;
     for (int y = 8; y <= 11; y++)
-        for (int x = 11; x <= 16; x++) farm_tiles[y * FARM_W + x] = T_SOIL;
+        for (int x = 11; x <= 16; x++) farm_tiles[y * FARM_W + x] = T_GRASS;
 
     /* Pond. */
     for (int y = 4; y <= 9; y++)
@@ -1121,6 +1125,14 @@ static void build_farm(void)
     /* Exit path to town. */
     for (int x = 18; x <= 38; x++) farm_tiles[14 * FARM_W + x] = T_PATH;
     farm_tiles[14 * FARM_W + 38] = T_DOOR;
+
+    for (int i = 0; i < PLOTS; i++) {
+        if (tilled_mask & (1u << i)) {
+            int x = 11 + i % 6;
+            int y = 8 + i / 6;
+            farm_tiles[y * FARM_W + x] = T_SOIL;
+        }
+    }
 }
 
 static void build_town(void)
@@ -1946,7 +1958,7 @@ static void draw_item_icon(uint16_t *fb, int x, int y, int id, int seed)
         return;
     }
 
-    if (id == 14) {
+    if (id == 16) {
         fill_rect(fb, x + 3, y + 3, 10, 10, RGB(86, 76, 62));
         fill_rect(fb, x + 4, y + 4, 8, 8, RGB(226, 214, 184));
         fill_rect(fb, x + 5, y + 5, 6, 2, RGB(246, 238, 214));
@@ -1955,7 +1967,7 @@ static void draw_item_icon(uint16_t *fb, int x, int y, int id, int seed)
         put_px(fb, x + 9, y + 6, RGB(120, 104, 82));
         return;
     }
-    if (id == 15) {
+    if (id == 17) {
         fill_rect(fb, x + 4, y + 3, 8, 10, RGB(246, 240, 218));
         fill_rect(fb, x + 5, y + 2, 6, 2, RGB(255, 252, 236));
         fill_rect(fb, x + 5, y + 4, 2, 3, C_WHITE);
@@ -2288,7 +2300,7 @@ static void draw_bin(uint16_t *fb)
     fill_rect(fb, x, y + h - 1, w, 1, C_HUD_L);
 
     int total = 0;
-    for (int i = 0; i < 16; i++) total += produce[i] * crops[i].sell;
+    for (int i = 0; i < ITEM_COUNT; i++) total += produce[i] * crops[i].sell;
     for (int i = 0; i < 4; i++) total += fish[i] * fish_price[i];
 
     draw_text_big_shadow(fb, x + 16, y + 8, "shipping bin", C_GOLD);
@@ -2298,7 +2310,7 @@ static void draw_bin(uint16_t *fb)
     draw_text_big_shadow(fb, x + w - 22, y + 8, "g", C_GOLD);
 
     int row = 0;
-    for (int i = 0; i < 16 && row < 4; i++) {
+    for (int i = 0; i < ITEM_COUNT && row < 4; i++) {
         if (!produce[i]) continue;
         int ry = y + 38 + row * 22;
         draw_text_big_shadow(fb, x + 16, ry, crops[i].name, C_WHITE);
@@ -2332,7 +2344,7 @@ static void draw_summary(uint16_t *fb)
     draw_text_big_shadow(fb, x + 16, y + 8, "sold", C_GOLD);
 
     int row = 0;
-    for (int i = 0; i < 16 && row < 4; i++) {
+    for (int i = 0; i < ITEM_COUNT && row < 4; i++) {
         if (!summary_items[i]) continue;
         int ry = y + 30 + row * 20;
         draw_text_big_shadow(fb, x + 16, ry, crops[i].name, C_WHITE);
@@ -2477,12 +2489,12 @@ static int bag_get(int idx, int *kind, int *id, int *count)
         *kind = IT_SEED; *id = cid; *count = seeds[cid]; return 1;
     }
     base += n;
-    if (idx < base + 16) {
+    if (idx < base + ITEM_COUNT) {
         int cid = idx - base;
         if (!produce[cid]) return 0;
         *kind = IT_CROP; *id = cid; *count = produce[cid]; return 1;
     }
-    base += 16;
+    base += ITEM_COUNT;
     if (idx < base + 4) {
         int fid = idx - base;
         if (!fish[fid]) return 0;
@@ -2503,7 +2515,7 @@ static int bag_find_selected(void)
     }
     int n = season_crop_count[season];
     if (sel_kind == IT_CROP) return 4 + n + sel_id;
-    if (sel_kind == IT_FISH) return 4 + n + 16 + sel_id;
+    if (sel_kind == IT_FISH) return 4 + n + ITEM_COUNT + sel_id;
     return 0;
 }
 
@@ -2638,6 +2650,8 @@ static void draw_prompt(uint16_t *fb)
         else if (t == T_BIN) s = "A bin";
         else if (t == T_MAILBOX) s = "A mail";
         else if (t == T_FOUNTAIN) s = (all_stories_done() && !(secrets & SEC_CAMPFIRE) && minutes >= 18 * 60) ? "A talk" : "A wish";
+        else if ((t == T_GRASS || t == T_GRASS2) && scene_id == SC_FARM &&
+                 plot_index(tx, ty) >= 0 && sel_kind == IT_HOE) s = "A till";
         else if (t == T_WATER) s = (sel_kind == IT_CAN) ? "A refill" : "select can";
         if (scene_id == SC_MINE) s = (sel_kind == IT_SWORD) ? "A swing" : "select sword";
     }
@@ -2885,7 +2899,7 @@ static void open_shop(void)
 static void deposit_bin(void)
 {
     int total = 0;
-    for (int i = 0; i < 16; i++) {
+    for (int i = 0; i < ITEM_COUNT; i++) {
         if (produce[i]) {
             bin_items[i] += produce[i];
             total += produce[i] * crops[i].sell;
@@ -2909,7 +2923,7 @@ static void deposit_bin(void)
 static void open_bin(void)
 {
     int any = 0;
-    for (int i = 0; i < 16; i++) if (produce[i]) any = 1;
+    for (int i = 0; i < ITEM_COUNT; i++) if (produce[i]) any = 1;
     for (int i = 0; i < 4; i++) if (fish[i]) any = 1;
     if (!any) {
         set_message("bin empty");
@@ -3096,7 +3110,7 @@ static int use_tool(void)
             scene_tiles[scene_id][ty * scene_w[scene_id] + tx] = T_MINE_FLOOR;
             if (t == T_ORE) {
                 if (!(secrets & SEC_FOSSIL) && (rnd() % 100) < 2) {
-                    if (produce[14] < 15) produce[14]++;
+                    if (produce[16] < 15) produce[16]++;
                     secrets |= SEC_FOSSIL;
                     save_now();
                     set_message(dino_unlocked ? "dino fossil!" : "fossil!");
@@ -3265,9 +3279,29 @@ static int use_tool(void)
     }
 
     if (t == T_GRASS || t == T_GRASS2) {
-        if (sel_kind == IT_HOE) set_message("soil is ready");
-        else if (sel_kind == IT_SWORD) set_message("mine only");
-        else set_message("not here");
+        if (sel_kind == IT_HOE) {
+            int idx = plot_index(tx, ty);
+            if (idx < 0) {
+                set_message("not here");
+            } else if (tilled_mask & (1u << idx)) {
+                set_message("already tilled");
+            } else if (energy <= 0) {
+                sound_play(SFX_ERROR);
+                set_message("too tired");
+            } else {
+                tilled_mask |= 1u << idx;
+                farm_tiles[ty * FARM_W + tx] = T_SOIL;
+                energy--;
+                advance_minutes(2);
+                save_now();
+                sound_play(SFX_PLANT);
+                set_message("tilled");
+            }
+        } else if (sel_kind == IT_SWORD) {
+            set_message("mine only");
+        } else {
+            set_message("not here");
+        }
         return 1;
     }
 
@@ -3344,7 +3378,7 @@ static void sleep_night(void)
     int rain = (weather == 1);
 
     summary_gold = 0;
-    for (int i = 0; i < 16; i++) {
+    for (int i = 0; i < ITEM_COUNT; i++) {
         summary_items[i] = bin_items[i];
         if (bin_items[i]) summary_gold += bin_items[i] * crops[i].sell;
         bin_items[i] = 0;
@@ -3394,7 +3428,7 @@ static void sleep_night(void)
         if (fish[t] < 15) fish[t]++;
     }
     if ((pet_owned & 2) && pet_aff[1] >= 100) {
-        if (produce[15] < 15) produce[15]++;
+        if (produce[17] < 15) produce[17]++;
     }
     if ((pet_owned & 3) == 3 && pet_aff[0] >= 100 && pet_aff[1] >= 100 && !dino_unlocked) {
         dino_unlocked = 1;
@@ -3743,6 +3777,15 @@ static void game_to_save(SaveData *d)
     memcpy(d->seeds, seeds, 16);
     memcpy(d->produce, produce, 16);
     memcpy(d->bin_items, bin_items, 16);
+    d->seeds_ext[0] = seeds[16];
+    d->seeds_ext[1] = seeds[17];
+    d->produce_ext[0] = produce[16];
+    d->produce_ext[1] = produce[17];
+    d->bin_ext[0] = bin_items[16];
+    d->bin_ext[1] = bin_items[17];
+    d->tilled[0] = (uint8_t)(tilled_mask & 0xFF);
+    d->tilled[1] = (uint8_t)((tilled_mask >> 8) & 0xFF);
+    d->tilled[2] = (uint8_t)((tilled_mask >> 16) & 0xFF);
     memcpy(d->crop_id, plot_crop, PLOTS);
     memcpy(d->crop_growth, plot_growth, PLOTS);
     memcpy(d->crop_water, plot_water, PLOTS);
@@ -3817,6 +3860,13 @@ static void game_from_save(const SaveData *d)
     memcpy(seeds, d->seeds, 16);
     memcpy(produce, d->produce, 16);
     memcpy(bin_items, d->bin_items, 16);
+    seeds[16] = d->seeds_ext[0];
+    seeds[17] = d->seeds_ext[1];
+    produce[16] = d->produce_ext[0];
+    produce[17] = d->produce_ext[1];
+    bin_items[16] = d->bin_ext[0];
+    bin_items[17] = d->bin_ext[1];
+    tilled_mask = (uint32_t)d->tilled[0] | ((uint32_t)d->tilled[1] << 8) | ((uint32_t)d->tilled[2] << 16);
     memcpy(plot_crop, d->crop_id, PLOTS);
     memcpy(plot_growth, d->crop_growth, PLOTS);
     memcpy(plot_water, d->crop_water, PLOTS);
@@ -3889,6 +3939,7 @@ static void game_new(void)
     memset(seeds, 0, sizeof(seeds));
     memset(produce, 0, sizeof(produce));
     memset(bin_items, 0, sizeof(bin_items));
+    tilled_mask = 0;
     seeds[0] = 5;
     seeds[1] = 3;
     seeds[2] = 2;
@@ -3973,7 +4024,7 @@ void game_debug_season(int s)
 
 void game_debug_give(int crop_id, int n)
 {
-    if (crop_id >= 1 && crop_id <= 16) produce[crop_id - 1] += n;
+    if (crop_id >= 1 && crop_id <= ITEM_COUNT) produce[crop_id - 1] += n;
 }
 
 void game_debug_fill_pets(void)
@@ -4005,7 +4056,7 @@ void game_debug_points(int i, int v) { if (i >= 0 && i < 3) npc_points[i] = v; }
 void game_debug_day(int d) { day = d; }
 
 void game_debug_set_heart(int i, int p) { if (i >= 0 && i < 3) npc_points[i] = p; }
-void game_debug_give_crop(int id, int n) { if (id >= 0 && id < 16) produce[id] = (uint8_t)(produce[id] + n); }
+void game_debug_give_crop(int id, int n) { if (id >= 0 && id < ITEM_COUNT) produce[id] = (uint8_t)(produce[id] + n); }
 int game_debug_points_get(int i){return (i>=0&&i<3)?npc_points[i]:0;}
 int game_debug_story_get(int i){return (i>=0&&i<3)?story[i]:0;}
 int game_debug_coins_now(void) { return coins; }
